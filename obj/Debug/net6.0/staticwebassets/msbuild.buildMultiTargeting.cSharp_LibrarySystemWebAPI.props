@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\cSharp_LibrarySystemWebAPI.props" />
+</Project>

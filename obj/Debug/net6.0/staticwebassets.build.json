@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NS80azjkabI/ugmu8pedz2S4HA/XA9yIHh7L0NyRQXA=",
+  "Source": "cSharp_LibrarySystemWebAPI",
+  "BasePath": "_content/cSharp_LibrarySystemWebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
