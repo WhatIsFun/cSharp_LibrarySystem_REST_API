@@ -15,9 +15,15 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             _context = DB;
         }
         [HttpPost]
-        public void addBook(Book book)
+        public void addBook(Book book, string title, string author, int publicationYear)
         {
-
+            var newBook = new Book
+            {
+                Title = title,
+                Author = author,
+                PublicationYear = publicationYear,
+                IsAvailable = true // Assuming the book is available when added
+            };
             _context.Book.Add(book);
             _context.SaveChanges();
         }

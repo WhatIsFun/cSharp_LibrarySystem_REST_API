@@ -40,12 +40,12 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             };
             _context.BorrowingTransaction.Add(transaction);
 
-            book.IsAvailable = false;
+            ToggleBookAvailability(book);
 
             _context.SaveChanges();
             Console.WriteLine("Borrowing successfully");
         }
-
+        [HttpPost("ReturnBook")]
         public void MarkBookAsReturned(int returnBookId)
         {
             var transaction = _context.BorrowingTransaction.FirstOrDefault(bt => bt.BookId == returnBookId);
@@ -67,7 +67,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             var book = _context.Book.FirstOrDefault(b => b.BookId == transaction.BookId);
             if (book != null)
             {
-                book.IsAvailable = true;
+                ToggleBookAvailability(book);
             }
 
             _context.SaveChanges();
@@ -75,24 +75,28 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         [HttpGet("ByPatronId")]
         public void GetPatronBorrowingHistory(int patronID)
         {
-            var patron = _context.Patron.Include(p => p.BorrowingTransactions)
-                            .FirstOrDefault(p => p.PatronId == patronID);
+            var patron = _context.Patron
+                .Include(p => p.BorrowingTransactions)
+                .ThenInclude(bt => bt.Book) // Include the Book entity
+                .FirstOrDefault(p => p.PatronId == patronID);
+
             if (patron == null)
             {
-                Console.WriteLine("No history found for this Patron");
+                Console.WriteLine("No patron found with this ID.");
             }
 
             var borrowingHistory = patron.BorrowingTransactions.OrderByDescending(bt => bt.BorrowDate).ToList();
-            if (borrowingHistory.Count == 0)
+
+            if (borrowingHistory.Count > 0)
             {
-                Console.WriteLine("No borrowing history found for this patron.");
+                foreach (var tran in borrowingHistory)
+                {
+                    Console.WriteLine($"Borrowing Transaction ID: {tran.BorrowingTransactionId}\nPatron ID:{tran.Patron.PatronId}\nPatron Name: {tran.Patron.Name}\nPatron Phone Number: {tran.Patron.PhoneNum}\nBook ID: {tran.BookId}\nBook Title: {tran.Book.Title}\nBorrow Date: {tran.BorrowDate}\nReturn Date: {tran.ReturnDate}\n____________________");
+                }
             }
             else
             {
-                foreach (var transaction in borrowingHistory)
-                {
-                    Console.WriteLine($"Borrowing Transaction ID: {transaction.BorrowingTransactionId}\nPatron ID:{transaction.Patron.PatronId}\nPatron Name: {transaction.Patron.Name}\nPatron Phone Number: {transaction.Patron.PhoneNum}\nBook ID: {transaction.BookId}\nBook Title: {transaction.Book.Title}\nBorrow Date: {transaction.BorrowDate}\nReturn Date: {transaction.ReturnDate}\n____________________");
-                }
+                Console.WriteLine("No borrowing history found for this patron.");
             }
         }
         [HttpGet("AllHistory")]
@@ -111,6 +115,12 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 }
             }
         }
-
+        [HttpPut("Flag")]
+        private bool ToggleBookAvailability(Book book)
+        {
+            bool isAvailable = book.IsAvailable;
+            book.IsAvailable = !isAvailable;
+            return isAvailable;
+        }
     }
 }
