@@ -10,6 +10,7 @@ namespace cSharp_LibrarySystemWebAPI.Model
         public string Name { get; set; }
         [Required]
         public string PhoneNum { get; set; }
+        public int Age { get; set; }
         public List<BorrowingTransaction> BorrowingTransactions { get; set; }
     }
 }

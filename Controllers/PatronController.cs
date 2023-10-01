@@ -15,12 +15,13 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         }
 
         [HttpPost]
-        public void AddPatron(string name, string phone)
+        public void AddPatron(string name, string phone, int age)
         {
             var newPatron = new Patron
             {
                 Name = name,
-                PhoneNum = phone
+                PhoneNum = phone,
+                Age = age
             };
 
             _context.Add(newPatron);
@@ -45,6 +46,16 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             return _context.Patron
                 .Where(p => p.Name.Contains(searchKeyword) || p.PhoneNum.Contains(searchKeyword))
                 .ToList();
+        }
+        [HttpGet("byAgeRange/{minAge}/{maxAge}")]
+        public void GetPatronsByAgeRange(int minAge, int maxAge)
+        {
+            var patronsInAgeRange = _context.Patron.Where(p => p.Age >= minAge && p.Age <= maxAge).ToList();
+        }
+        [HttpGet("byName/{name}")]
+        public void GetPatronByName(string name)
+        {
+            var patron = _context.Patron.FirstOrDefault(p => p.Name == name);
         }
         [HttpPut]
         public void UpdatePatron(Patron patron)

@@ -91,12 +91,12 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             {
                 foreach (var tran in borrowingHistory)
                 {
-                    Console.WriteLine($"Borrowing Transaction ID: {tran.BorrowingTransactionId}\nPatron ID:{tran.Patron.PatronId}\nPatron Name: {tran.Patron.Name}\nPatron Phone Number: {tran.Patron.PhoneNum}\nBook ID: {tran.BookId}\nBook Title: {tran.Book.Title}\nBorrow Date: {tran.BorrowDate}\nReturn Date: {tran.ReturnDate}\n____________________");
+                    Console.WriteLine ($"Borrowing Transaction ID: {tran.BorrowingTransactionId}\nPatron ID:{tran.Patron.PatronId}\nPatron Name: {tran.Patron.Name}\nPatron Phone Number: {tran.Patron.PhoneNum}\nBook ID: {tran.BookId}\nBook Title: {tran.Book.Title}\nBorrow Date: {tran.BorrowDate}\nReturn Date: {tran.ReturnDate}\n____________________");
                 }
             }
             else
             {
-                Console.WriteLine("No borrowing history found for this patron.");
+                Console.WriteLine ("No borrowing history found for this patron.");
             }
         }
         [HttpGet("AllHistory")]
@@ -115,6 +115,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 }
             }
         }
+
         [HttpPut("Flag")]
         private bool ToggleBookAvailability(Book book)
         {
@@ -122,5 +123,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             book.IsAvailable = !isAvailable;
             return isAvailable;
         }
+
+        
     }
 }
