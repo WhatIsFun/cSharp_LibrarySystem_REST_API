@@ -14,72 +14,156 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             _context = DB;
         }
 
-        [HttpPost]
-        public void AddPatron(string name, string phone, int age)
+        [HttpPost("AddPatron")]
+        public IActionResult AddPatron(string name, string phone, int age)
         {
-            var newPatron = new Patron
+            try
             {
-                Name = name,
-                PhoneNum = phone,
-                Age = age
-            };
+                var newPatron = new Patron
+                {
+                    Name = name,
+                    PhoneNum = phone,
+                    Age = age
+                };
 
-            _context.Add(newPatron);
-            _context.SaveChanges();
-
-            Console.WriteLine("Patron added successfully. Press any key to continue.");
-            Console.ReadKey();
-        }
-        [HttpGet]
-        public List<Patron> GetAllPatrons()
-        {
-            return _context.Patron.ToList();
-        }
-        [HttpGet("getById")]
-        public Patron GetPatronById(int patronId)
-        {
-            return _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
-        }
-        [HttpGet("getByKeyword")]
-        public List<Patron> SearchPatrons(string searchKeyword)
-        {
-            return _context.Patron
-                .Where(p => p.Name.Contains(searchKeyword) || p.PhoneNum.Contains(searchKeyword))
-                .ToList();
-        }
-        [HttpGet("byAgeRange/{minAge}/{maxAge}")]
-        public void GetPatronsByAgeRange(int minAge, int maxAge)
-        {
-            var patronsInAgeRange = _context.Patron.Where(p => p.Age >= minAge && p.Age <= maxAge).ToList();
-        }
-        [HttpGet("byName/{name}")]
-        public void GetPatronByName(string name)
-        {
-            var patron = _context.Patron.FirstOrDefault(p => p.Name == name);
-        }
-        [HttpPut]
-        public void UpdatePatron(Patron patron)
-        {
-            var existingPatron = _context.Patron.FirstOrDefault(p => p.PatronId == patron.PatronId);
-
-            if (existingPatron != null)
-            {
-                existingPatron.Name = patron.Name;
-                existingPatron.PhoneNum = patron.PhoneNum;
-
+                _context.Add(newPatron);
                 _context.SaveChanges();
+
+                return Ok("Patron added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-        [HttpDelete]
-        public void DeletePatron(int patronId)
-        {
-            var patronToDelete = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
 
-            if (patronToDelete != null)
+        [HttpGet("GetAllPatrons")]
+        public IActionResult GetAllPatrons()
+        {
+            try
             {
-                _context.Patron.Remove(patronToDelete);
-                _context.SaveChanges();
+                var patrons = _context.Patron.ToList();
+                return Ok(patrons);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+        [HttpGet("GetPatronById")]
+        public IActionResult GetPatronById(int patronId)
+        {
+            try
+            {
+                var patron = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
+                if (patron == null)
+                {
+                    return NotFound("Patron not found.");
+                }
+                return Ok(patron);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("SearchPatrons")]
+        public IActionResult SearchPatrons(string searchKeyword)
+        {
+            try
+            {
+                var patrons = _context.Patron
+                    .Where(p => p.Name.Contains(searchKeyword) || p.PhoneNum.Contains(searchKeyword))
+                    .ToList();
+                return Ok(patrons);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetPatronsByAgeRange/{minAge}/{maxAge}")]
+        public IActionResult GetPatronsByAgeRange(int minAge, int maxAge)
+        {
+            try
+            {
+                var patronsInAgeRange = _context.Patron.Where(p => p.Age >= minAge && p.Age <= maxAge).ToList();
+                return Ok(patronsInAgeRange);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetPatronByName/{name}")]
+        public IActionResult GetPatronByName(string name)
+        {
+            try
+            {
+                var patron = _context.Patron.FirstOrDefault(p => p.Name == name);
+                if (patron == null)
+                {
+                    return NotFound("Patron not found.");
+                }
+                return Ok(patron);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("UpdatePatron")]
+        public IActionResult UpdatePatron(Patron patron)
+        {
+            try
+            {
+                var existingPatron = _context.Patron.FirstOrDefault(p => p.PatronId == patron.PatronId);
+                if (existingPatron != null)
+                {
+                    existingPatron.Name = patron.Name;
+                    existingPatron.PhoneNum = patron.PhoneNum;
+
+                    _context.SaveChanges();
+                    return Ok("Patron updated successfully.");
+                }
+                else
+                {
+                    return NotFound("Patron not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("DeletePatron")]
+        public IActionResult DeletePatron(int patronId)
+        {
+            try
+            {
+                var patronToDelete = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
+                if (patronToDelete != null)
+                {
+                    _context.Patron.Remove(patronToDelete);
+                    _context.SaveChanges();
+                    return Ok("Patron deleted successfully.");
+                }
+                else
+                {
+                    return NotFound("Patron not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace cSharp_LibrarySystemWebAPI.Controllers
 {
@@ -14,101 +15,265 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         {
             _context = DB;
         }
-        [HttpPost]
-        public void addBook(Book book, string title, string author, int publicationYear)
+        [HttpPost("addBook")]
+        public IActionResult AddBook([FromBody] Book book)
         {
-            var newBook = new Book
+            if (book == null)
             {
-                Title = title,
-                Author = author,
-                PublicationYear = publicationYear,
-                IsAvailable = true // Assuming the book is available when added
-            };
-            _context.Book.Add(book);
-            _context.SaveChanges();
-        }
-        [HttpGet]
-        public List<Book> getAllBooks()
-        {
-            return _context.Book.ToList();
-        }
-        [HttpGet("getById")]
-        public Book getBookById(int searchBookId)
-        {
-            return _context.Book.FirstOrDefault(b => b.BookId == searchBookId);
-        }
-        [HttpPut]
-        public void updateBook(Book book)
-        {
-            _context.Entry(book).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-        [HttpDelete]
-        public void deleteBook(int bookId)
-        {
-            var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
-            if (book != null)
+                return BadRequest("Invalid book data.");
+            }
+
+            try
             {
-                _context.Book.Remove(book);
+                _context.Book.Add(book);
                 _context.SaveChanges();
+                return Ok("Book has been added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to add the book: {ex.Message}");
             }
         }
-        [HttpGet("byPublicationYear/{year}")]
-        public void GetBooksByPublicationYear(int year)
+
+        [HttpGet("getAllBooks")]
+        public IActionResult GetAllBooks()
         {
-            var books = _context.Book.Where(b => b.PublicationYear == year).ToList();
+            try
+            {
+                var allBooks = _context.Book.ToList();
+                if (allBooks != null) 
+                {
+                    return Ok(allBooks);
+                }
+                return NotFound("There is no books found");
+            }
+            catch { return BadRequest("Error ..."); }
         }
 
-        [HttpGet("countByPublicationYear/{year}")]
-        public void GetBookCountByPublicationYear(int year)
+        [HttpGet("getBookById")]
+        public IActionResult GetBookById(int searchBookId)
         {
-            var count = _context.Book.Count(b => b.PublicationYear == year);
+            try
+            {
+                var book = _context.Book.FirstOrDefault(b => b.BookId == searchBookId);
+                if (book == null)
+                {
+                    return NotFound("Book not found.");
+                }
+                return Ok(book);
+            }catch { return BadRequest("Error ..."); }
+            
+        }
+        [HttpPut("updateBook")]
+        public IActionResult UpdateBook([FromBody] Book book)
+        {
+            if (book == null)
+            {
+                return BadRequest("Invalid book data.");
+            }
+
+            try
+            {
+                _context.Entry(book).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok("Book has been updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to update the book: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("deleteBook/{bookId}")]
+        public IActionResult DeleteBook(int bookId)
+        {
+            try
+            {
+                var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
+                if (book == null)
+                {
+                    return NotFound("Book not found.");
+                }
+
+                try
+                {
+                    _context.Book.Remove(book);
+                    _context.SaveChanges();
+                    return Ok("Book has been deleted successfully.");
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Failed to delete the book: {ex.Message}");
+                }
+            }catch(Exception ex)
+            {
+                return BadRequest($"Failed to delete the book: {ex.Message}");
+            }
+            
+        }
+
+        [HttpGet("byPublicationYear/{year}")]
+        public IActionResult GetBooksByPublicationYear(int year)
+        {
+            try
+            {
+                var books = _context.Book.Where(b => b.PublicationYear == year).ToList();
+                if (books != null)
+                {
+                    return Ok(books);
+                }
+                else
+                {
+                    return NotFound("No books found publicated in this year");
+                }
+            }catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the books: {ex.Message}");
+            }
+            
         }
 
         [HttpGet("available")]
-        public void GetAvailableBooks()
+        public IActionResult GetAvailableBooks()
         {
-            var availableBooks = _context.Book.Where(b => b.IsAvailable).ToList();
+            try
+            {
+                var availableBooks = _context.Book.Where(b => b.IsAvailable).ToList();
+                if (availableBooks != null)
+                {
+                    return Ok(availableBooks);
+                }
+                else { return NotFound("there are no available books"); }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the available books: {ex.Message}");
+            }
         }
 
         [HttpGet("byAuthor/{author}")]
-        public void GetBooksByAuthor(string author)
+        public IActionResult GetBooksByAuthor(string author)
         {
-            var booksByAuthor = _context.Book.Where(b => b.Author == author).ToList();
+            try
+            {
+                var booksByAuthor = _context.Book.Where(b => b.Author == author).ToList();
+                if (booksByAuthor != null)
+                {
+                    return Ok(booksByAuthor);
+                }
+                else { return NotFound("there are no books fot this author"); }
+            }catch (Exception ex)
+            {
+                return BadRequest($"Failed to get author books: {ex.Message}");
+            }
         }
 
         [HttpGet("byTitle/{title}")]
-        public void GetBookByTitle(string title)
+        public IActionResult GetBookByTitle(string title)
         {
-            var book = _context.Book.FirstOrDefault(b => b.Title == title);
+            try
+            {
+                var book = _context.Book.FirstOrDefault(b => b.Title == title);
+                if (book == null)
+                {
+                    return NotFound("Book not found.");
+                }
+                return Ok(book);
+            }catch(Exception ex)
+            {
+                return BadRequest($"Error {ex.Message}");
+            }
+            
         }
+
         [HttpGet("byBorrowingDate/{borrowDate}")]
-        public void GetTransactionsByBorrowingDate(DateTime borrowDate)
+        public IActionResult GetTransactionsByBorrowingDate(DateTime borrowDate)
         {
-            var transactionsByBorrowDate = _context.BorrowingTransaction
+            try
+            {
+                var transactionsByBorrowDate = _context.BorrowingTransaction
                 .Where(bt => bt.BorrowDate.Date == borrowDate.Date)
                 .ToList();
+                if (transactionsByBorrowDate != null)
+                {
+                    return Ok(transactionsByBorrowDate);
+                }
+                else { return NotFound("there are no books borrowed in this date"); }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the date: {ex.Message}");
+            }
+
         }
+
         [HttpGet("byReturnDate/{returnDate}")]
-        public void GetTransactionsByReturnDate(DateTime returnDate)
+        public IActionResult GetTransactionsByReturnDate(DateTime returnDate)
         {
-            var transactionsByReturnDate = _context.BorrowingTransaction
+            try
+            {
+                var transactionsByReturnDate = _context.BorrowingTransaction
                 .Where(bt => bt.ReturnDate.HasValue && bt.ReturnDate.Value.Date == returnDate.Date)
                 .ToList();
+                if (transactionsByReturnDate != null)
+                {
+                    return Ok(transactionsByReturnDate);
+                }
+                else { return NotFound("there are no books returned in this date"); }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the date: {ex.Message}");
+            }
+
         }
+
         [HttpGet("byBookId/{bookId}")]
-        public void GetTransactionsByBook(int bookId)
+        public IActionResult GetTransactionsByBook(int bookId)
         {
-            var transactionsByBook = _context.BorrowingTransaction
+            try
+            {
+                var transactionsByBook = _context.BorrowingTransaction
                 .Where(bt => bt.BookId == bookId)
                 .ToList();
+                if (transactionsByBook != null)
+                {
+                    return Ok(transactionsByBook);
+                }
+                else
+                {
+                    return NotFound("No books found with this ID");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the book Id: {ex.Message}");
+            }
+
         }
+
         [HttpGet("bookBorrowCount/{bookId}")]
-        public void GetBookBorrowCount(int bookId)
+        public IActionResult GetBookBorrowCount(int bookId)
         {
-            var borrowCount = _context.BorrowingTransaction
+            try
+            {
+                var borrowCount = _context.BorrowingTransaction
                 .Count(bt => bt.BookId == bookId);
+                if (borrowCount != 0)
+                {
+                    return Ok(borrowCount);
+                }
+                else
+                {
+                    return NotFound("No history found for this book");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to get the history of this book: {ex.Message}");
+            }
         }
+
 
     }
 }

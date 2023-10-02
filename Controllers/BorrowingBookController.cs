@@ -15,104 +15,126 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             _context = DB;
         }
         [HttpPost]
-        public void CreateBorrowingTransaction(int patronId, int bookId)
+        [HttpPost("CreateBorrowingTransaction")]
+        public IActionResult CreateBorrowingTransaction(int patronId, int bookId)
         {
-            // Check if the book is available for borrowing
-            var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
-            if (book == null || !book.IsAvailable)
+            try
             {
-                throw new Exception("The selected book is not available for borrowing.");
-            }
+                // Check if the book is available for borrowing
+                var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
+                if (book == null || !book.IsAvailable)
+                {
+                    return BadRequest("The selected book is not available for borrowing.");
+                }
 
-            // Check if the patron exists
-            var patron = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
-            if (patron == null)
-            {
-                throw new Exception("Patron not found.");
-            }
+                // Check if the patron exists
+                var patron = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
+                if (patron == null)
+                {
+                    return BadRequest("Patron not found.");
+                }
 
-            var transaction = new BorrowingTransaction
-            {
-                PatronId = patronId,
-                BookId = bookId,
-                BorrowDate = DateTime.Now,
-                ReturnDate = null
-            };
-            _context.BorrowingTransaction.Add(transaction);
+                var transaction = new BorrowingTransaction
+                {
+                    PatronId = patronId,
+                    BookId = bookId,
+                    BorrowDate = DateTime.Now,
+                    ReturnDate = null
+                };
+                _context.BorrowingTransaction.Add(transaction);
 
-            ToggleBookAvailability(book);
-
-            _context.SaveChanges();
-            Console.WriteLine("Borrowing successfully");
-        }
-        [HttpPost("ReturnBook")]
-        public void MarkBookAsReturned(int returnBookId)
-        {
-            var transaction = _context.BorrowingTransaction.FirstOrDefault(bt => bt.BookId == returnBookId);
-
-            if (transaction == null)
-            {
-                Console.WriteLine("Borrowing transaction not found.");
-                return;
-            }
-
-            if (transaction.ReturnDate != null)
-            {
-                Console.WriteLine("The book has already been returned.");
-                return;
-            }
-
-            transaction.ReturnDate = DateTime.Now;
-
-            var book = _context.Book.FirstOrDefault(b => b.BookId == transaction.BookId);
-            if (book != null)
-            {
                 ToggleBookAvailability(book);
-            }
 
-            _context.SaveChanges();
+                _context.SaveChanges();
+                return Ok("Borrowing successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
+
+        [HttpPost("ReturnBook")]
+        public IActionResult MarkBookAsReturned(int returnBookId)
+        {
+            try
+            {
+                var transaction = _context.BorrowingTransaction.FirstOrDefault(bt => bt.BookId == returnBookId);
+
+                if (transaction == null)
+                {
+                    return BadRequest("Borrowing transaction not found.");
+                }
+
+                if (transaction.ReturnDate != null)
+                {
+                    return BadRequest("The book has already been returned.");
+                }
+
+                transaction.ReturnDate = DateTime.Now;
+
+                var book = _context.Book.FirstOrDefault(b => b.BookId == transaction.BookId);
+                if (book != null)
+                {
+                    ToggleBookAvailability(book);
+                }
+
+                _context.SaveChanges();
+                return Ok("Book marked as returned successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
         [HttpGet("ByPatronId")]
-        public void GetPatronBorrowingHistory(int patronID)
+        public IActionResult GetPatronBorrowingHistory(int patronID)
         {
-            var patron = _context.Patron
-                .Include(p => p.BorrowingTransactions)
-                .ThenInclude(bt => bt.Book) // Include the Book entity
-                .FirstOrDefault(p => p.PatronId == patronID);
-
-            if (patron == null)
+            try
             {
-                Console.WriteLine("No patron found with this ID.");
-            }
+                var patron = _context.Patron
+                    .Include(p => p.BorrowingTransactions)
+                    .ThenInclude(bt => bt.Book) // Include the Book entity
+                    .FirstOrDefault(p => p.PatronId == patronID);
 
-            var borrowingHistory = patron.BorrowingTransactions.OrderByDescending(bt => bt.BorrowDate).ToList();
-
-            if (borrowingHistory.Count > 0)
-            {
-                foreach (var tran in borrowingHistory)
+                if (patron == null)
                 {
-                    Console.WriteLine ($"Borrowing Transaction ID: {tran.BorrowingTransactionId}\nPatron ID:{tran.Patron.PatronId}\nPatron Name: {tran.Patron.Name}\nPatron Phone Number: {tran.Patron.PhoneNum}\nBook ID: {tran.BookId}\nBook Title: {tran.Book.Title}\nBorrow Date: {tran.BorrowDate}\nReturn Date: {tran.ReturnDate}\n____________________");
+                    return NotFound("No patron found with this ID.");
+                }
+
+                var borrowingHistory = patron.BorrowingTransactions.OrderByDescending(bt => bt.BorrowDate).ToList();
+
+                if (borrowingHistory.Count > 0)
+                {
+                    return Ok(borrowingHistory);
+                }
+                else
+                {
+                    return NotFound("No borrowing history found for this patron.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine ("No borrowing history found for this patron.");
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
         [HttpGet("AllHistory")]
-        public void BorrowingHistory()
+        public IActionResult BorrowingHistory()
         {
-            var transaction = _context.BorrowingTransaction.Include(p => p.Patron).Include(b => b.Book);
-            if (transaction == null)
+            try
             {
-                Console.WriteLine("No transaction found");
-            }
-            else
-            {
-                foreach (var tran in transaction)
+                var transactions = _context.BorrowingTransaction.Include(p => p.Patron).Include(b => b.Book).ToList();
+                if (transactions == null || transactions.Count == 0)
                 {
-                    Console.WriteLine($"Borrowing Transaction ID: {tran.BorrowingTransactionId}\nPatron ID:{tran.Patron.PatronId}\nPatron Name: {tran.Patron.Name}\nPatron Phone Number: {tran.Patron.PhoneNum}\nBook ID: {tran.BookId}\nBook Title: {tran.Book.Title}\nBorrow Date: {tran.BorrowDate}\nReturn Date: {tran.ReturnDate}\n____________________");
+                    return NotFound("No transactions found.");
                 }
+                return Ok(transactions);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
 
@@ -124,6 +146,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             return isAvailable;
         }
 
-        
+
+
     }
 }
