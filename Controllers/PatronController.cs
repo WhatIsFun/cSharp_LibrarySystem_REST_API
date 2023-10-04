@@ -1,4 +1,5 @@
 ﻿using cSharp_LibrarySystemWebAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         {
             _context = DB;
         }
-
+        [Authorize]
         [HttpPost("AddPatron")]
         public IActionResult AddPatron(string name, string phone, int age)
         {
@@ -36,7 +37,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("GetAllPatrons")]
         public IActionResult GetAllPatrons()
         {
@@ -50,6 +51,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+        [Authorize]
         [HttpGet("GetPatronById")]
         public IActionResult GetPatronById(int patronId)
         {
@@ -67,7 +69,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("SearchPatrons")]
         public IActionResult SearchPatrons(string searchKeyword)
         {
@@ -83,7 +85,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("GetPatronsByAgeRange/{minAge}/{maxAge}")]
         public IActionResult GetPatronsByAgeRange(int minAge, int maxAge)
         {
@@ -97,7 +99,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("GetPatronByName/{name}")]
         public IActionResult GetPatronByName(string name)
         {
@@ -115,7 +117,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpPut("UpdatePatron")]
         public IActionResult UpdatePatron(Patron patron)
         {
@@ -140,7 +142,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpDelete("DeletePatron")]
         public IActionResult DeletePatron(int patronId)
         {

@@ -259,3 +259,4 @@ C:\Users\user\Source\Repos\cSharp_LibrarySystem_REST_API\obj\Debug\net6.0\refint
 C:\Users\user\Source\Repos\cSharp_LibrarySystem_REST_API\obj\Debug\net6.0\cSharp_LibrarySystemWebAPI.pdb
 C:\Users\user\Source\Repos\cSharp_LibrarySystem_REST_API\obj\Debug\net6.0\cSharp_LibrarySystemWebAPI.genruntimeconfig.cache
 C:\Users\user\Source\Repos\cSharp_LibrarySystem_REST_API\obj\Debug\net6.0\ref\cSharp_LibrarySystemWebAPI.dll
+C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

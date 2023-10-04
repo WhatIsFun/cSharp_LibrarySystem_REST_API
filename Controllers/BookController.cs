@@ -1,4 +1,5 @@
 ﻿using cSharp_LibrarySystemWebAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +16,10 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         {
             _context = DB;
         }
+        [Authorize]
         [HttpPost("addBook")]
-        public IActionResult AddBook([FromBody] Book book)
+        public IActionResult AddBook(Book book)
         {
-            if (book == null)
-            {
-                return BadRequest("Invalid book data.");
-            }
-
             try
             {
                 _context.Book.Add(book);
@@ -34,7 +31,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to add the book: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("getAllBooks")]
         public IActionResult GetAllBooks()
         {
@@ -49,7 +46,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             catch { return BadRequest("Error ..."); }
         }
-
+        [Authorize]
         [HttpGet("getBookById")]
         public IActionResult GetBookById(int searchBookId)
         {
@@ -64,6 +61,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }catch { return BadRequest("Error ..."); }
             
         }
+        [Authorize]
         [HttpPut("updateBook")]
         public IActionResult UpdateBook([FromBody] Book book)
         {
@@ -83,7 +81,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to update the book: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpDelete("deleteBook/{bookId}")]
         public IActionResult DeleteBook(int bookId)
         {
@@ -111,7 +109,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
-
+        [Authorize]
         [HttpGet("byPublicationYear/{year}")]
         public IActionResult GetBooksByPublicationYear(int year)
         {
@@ -132,7 +130,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
-
+        [Authorize]
         [HttpGet("available")]
         public IActionResult GetAvailableBooks()
         {
@@ -141,6 +139,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 var availableBooks = _context.Book.Where(b => b.IsAvailable).ToList();
                 if (availableBooks != null)
                 {
+
                     return Ok(availableBooks);
                 }
                 else { return NotFound("there are no available books"); }
@@ -150,7 +149,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to get the available books: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("byAuthor/{author}")]
         public IActionResult GetBooksByAuthor(string author)
         {
@@ -167,7 +166,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to get author books: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("byTitle/{title}")]
         public IActionResult GetBookByTitle(string title)
         {
@@ -185,7 +184,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
-
+        [Authorize]
         [HttpGet("byBorrowingDate/{borrowDate}")]
         public IActionResult GetTransactionsByBorrowingDate(DateTime borrowDate)
         {
@@ -206,7 +205,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
-
+        [Authorize]
         [HttpGet("byReturnDate/{returnDate}")]
         public IActionResult GetTransactionsByReturnDate(DateTime returnDate)
         {
@@ -227,7 +226,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
-
+        [Authorize]
         [HttpGet("byBookId/{bookId}")]
         public IActionResult GetTransactionsByBook(int bookId)
         {
@@ -251,7 +250,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
-
+        [Authorize]
         [HttpGet("bookBorrowCount/{bookId}")]
         public IActionResult GetBookBorrowCount(int bookId)
         {

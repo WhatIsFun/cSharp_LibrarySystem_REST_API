@@ -7,6 +7,7 @@ namespace cSharp_LibrarySystemWebAPI
     {
         public DbSet<Book> Book { get; set; }
         public DbSet<Patron> Patron { get; set; }
+        public DbSet<Login> Login { get; set; }
         public DbSet<BorrowingTransaction> BorrowingTransaction { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

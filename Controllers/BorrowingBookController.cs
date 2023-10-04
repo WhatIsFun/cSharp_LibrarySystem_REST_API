@@ -1,4 +1,5 @@
 ﻿using cSharp_LibrarySystemWebAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         {
             _context = DB;
         }
-        [HttpPost]
+        [Authorize]
         [HttpPost("CreateBorrowingTransaction")]
         public IActionResult CreateBorrowingTransaction(int patronId, int bookId)
         {
@@ -53,7 +54,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpPost("ReturnBook")]
         public IActionResult MarkBookAsReturned(int returnBookId)
         {
@@ -87,7 +88,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("ByPatronId")]
         public IActionResult GetPatronBorrowingHistory(int patronID)
         {
@@ -119,25 +120,41 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
+        [Authorize]
         [HttpGet("AllHistory")]
         public IActionResult BorrowingHistory()
         {
             try
             {
                 var transactions = _context.BorrowingTransaction.Include(p => p.Patron).Include(b => b.Book).ToList();
+
                 if (transactions == null || transactions.Count == 0)
                 {
                     return NotFound("No transactions found.");
                 }
-                return Ok(transactions);
+                var patron = transactions.First().Patron;
+                var historyList = transactions.Select(history => new
+                {
+                    BookTitle = history.Book.Title,
+                    BorrowDate = history.BorrowDate,
+                    ReturnDate = history.ReturnDate ?? DateTime.MinValue
+                }).ToList();
+
+                var result = new
+                {
+                    PatronName = patron.Name,
+                    PatronID = patron.PatronId,
+                    PatronPhone = patron.PhoneNum,
+                    BorrowingHistory = historyList
+                };
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
         [HttpPut("Flag")]
         private bool ToggleBookAvailability(Book book)
         {

@@ -3,17 +3,20 @@ using System.Text.Json.Serialization;
 
 namespace cSharp_LibrarySystemWebAPI.Model
 {
-    public class Patron
+    public class Login
     {
         [Key]
         [JsonIgnore]
-        public int PatronId { get; set; }
+        public int Id { get; set; }
         [Required]
+        [JsonIgnore]
         public string Name { get; set; }
         [Required]
-        public string PhoneNum { get; set; }
-        public int Age { get; set; }
+        public string Password { get; set; }
+        [Required]
+        public string Email { get; set; }
         [JsonIgnore]
-        public List<BorrowingTransaction> BorrowingTransactions { get; set; }
+        public string Phone { get; set; }
+
     }
 }
