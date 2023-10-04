@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace cSharp_LibrarySystemWebAPI.Controllers
 {
@@ -30,10 +31,12 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 _context.Add(newPatron);
                 _context.SaveChanges();
 
+                Log.Information($"new request to add patron : {name}, {phone}, {age}");
                 return Ok("Patron added successfully.");
             }
             catch (Exception ex)
             {
+                Log.Error($"new error to add patron : {name}, {phone}, {age}");
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
