@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
@@ -7,6 +8,7 @@ namespace cSharp_LibrarySystemWebAPI
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +16,23 @@ namespace cSharp_LibrarySystemWebAPI
             // Add services to the container.
             
             builder.Services.AddControllers();
+            // to connect to the DB
+            builder.Services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+
+            // Cors service
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
+            });
+
             //EF
-            builder.Services.AddDbContext<LibraryDbContext>();
+            //builder.Services.AddDbContext<LibraryDbContext>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -37,12 +54,16 @@ namespace cSharp_LibrarySystemWebAPI
 
                 };
             });
-            //SeriLog
-            Log.Logger = new LoggerConfiguration()
-                             .MinimumLevel.Information()
-                             .WriteTo.File("D:\\Log\\Logs.txt", rollingInterval: RollingInterval.Hour)
-                             .CreateLogger();
+            //SeriLog from old way
+            //Log.Logger = new LoggerConfiguration()
+            //                 .MinimumLevel.Information()
+            //                 .WriteTo.File("D:\\Log\\Logs.txt", rollingInterval: RollingInterval.Hour)
+            //                 .CreateLogger();
 
+            //Logging configs from Appsettings.json
+            Log.Logger = new LoggerConfiguration()
+                             .ReadFrom.Configuration(builder.Configuration)
+                             .CreateLogger();
 
             builder.Host.UseSerilog();
 
@@ -58,8 +79,17 @@ namespace cSharp_LibrarySystemWebAPI
 
             app.UseHttpsRedirection();
 
+            // Serilog request logging
+            app.UseSerilogRequestLogging();
+            // Cors middleware
+            app.UseCors("AllowAll");
+
             app.UseAuthentication(); //JWT
             app.UseAuthorization();
+
+            
+
+            
 
             app.MapControllers();
 

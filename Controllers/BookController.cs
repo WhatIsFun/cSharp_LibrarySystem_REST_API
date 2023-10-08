@@ -31,7 +31,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to add the book: {ex.Message}");
             }
         }
-        [Authorize]
+        //[Authorize]
         [HttpGet("getAllBooks")]
         public IActionResult GetAllBooks()
         {

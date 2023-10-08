@@ -10,10 +10,13 @@ namespace cSharp_LibrarySystemWebAPI
         public DbSet<Login> Login { get; set; }
         public DbSet<BorrowingTransaction> BorrowingTransaction { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlServer("Data Source=(local);Initial Catalog=LibrarySysem; Integrated Security=true; TrustServerCertificate=True");
-        }
+        public LibraryDbContext(DbContextOptions<LibraryDbContext> option)
+             :base(option)
+        {}
+        //protected override void OnConfiguring(DbContextOptionsBuilder options)
+        //{
+        //    options.UseSqlServer("Data Source=(local);Initial Catalog=LibrarySysem; Integrated Security=true; TrustServerCertificate=True");
+        //}
 
     }
 }
