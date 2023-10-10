@@ -19,14 +19,14 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             _context = DB;
         }
         [HttpPost("EmployeeLogin")]
-        public IActionResult EmployeeLogin(string email, string password)
+        public IActionResult EmployeeLogin(EmployeeLogin login)
         {
-            Log.Information("new request to login employee : " + email);
+            Log.Information("new request to login employee : " + login.Email);
             try
             {
-                Login login = _context.Login.Where(n => n.Email == email && n.Password == password).FirstOrDefault();
+                var userLogin = _context.Login.Where(n => n.Email == login.Email && n.Password == login.Password).FirstOrDefault();
 
-                if (login != null)
+                if (userLogin != null)
                 {
                     var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("this is my custom Secret key for authentication"));
 
@@ -34,7 +34,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
 
 
                     var data = new List<Claim>();
-                    data.Add(new Claim("Name", login.Name));
+                    data.Add(new Claim("Name", userLogin.Name));
 
                     var token = new JwtSecurityToken(
                       issuer: "Mohammed",
@@ -44,19 +44,19 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                     signingCredentials: credentials
 
                     );
-                    Log.Information($"new Login username: {login.Name}, {email}, {password}");
+                    Log.Information($"new Login username: {userLogin.Name}, {login.Email}, {login.Password}");
                     return Ok(new JwtSecurityTokenHandler().WriteToken(token));
 
                 }
                 else
                 {
-                    Log.Information("new unauthorized login employee : " + email);
+                    Log.Information("new unauthorized login employee : " + login.Email);
                     return Unauthorized("the user doesn't exist");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error("new error to login employee : " + email);
+                Log.Error("new error to login employee : " + login.Email);
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
