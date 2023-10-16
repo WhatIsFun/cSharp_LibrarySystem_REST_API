@@ -11,6 +11,7 @@
           "Microsoft.EntityFrameworkCore": "7.0.11",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.11",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.11",
+          "Microsoft.IdentityModel": "7.0.0",
           "Serilog.AspNetCore": "7.0.0",
           "Swashbuckle.AspNetCore": "6.5.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.3.0"
@@ -367,6 +368,14 @@
           "lib/netcoreapp2.1/Microsoft.Identity.Client.Extensions.Msal.dll": {
             "assemblyVersion": "2.19.3.0",
             "fileVersion": "2.19.3.0"
+          }
+        }
+      },
+      "Microsoft.IdentityModel/7.0.0": {
+        "runtime": {
+          "lib/net35/microsoft.identitymodel.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "6.1.7601.24479"
           }
         }
       },
@@ -1059,6 +1068,13 @@
       "sha512": "sha512-zVVZjn8aW7W79rC1crioDgdOwaFTQorsSO6RgVlDDjc7MvbEGz071wSNrjVhzR0CdQn6Sefx7Abf1o7vasmrLg==",
       "path": "microsoft.identity.client.extensions.msal/2.19.3",
       "hashPath": "microsoft.identity.client.extensions.msal.2.19.3.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-55LP0/gF3OAGhPNw/QxJs9q72xyS8rJ4ndZJC+GMSEjARh4hPmGVet2Oa9B8p8KKl3g8u3e+mh6WoBoUa0AiAA==",
+      "path": "microsoft.identitymodel/7.0.0",
+      "hashPath": "microsoft.identitymodel.7.0.0.nupkg.sha512"
     },
     "Microsoft.IdentityModel.Abstractions/6.24.0": {
       "type": "package",

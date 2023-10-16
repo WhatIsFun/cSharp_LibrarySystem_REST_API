@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.WSIdentity;
+using Serilog;
 
 namespace cSharp_LibrarySystemWebAPI.Controllers
 {
@@ -10,50 +12,81 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
     [ApiController]
     public class BorrowingBookController : ControllerBase
     {
+        private readonly TokenService tokenService;
         public static LibraryDbContext _context;
         public BorrowingBookController(LibraryDbContext DB)
         {
             _context = DB;
         }
+        public BorrowingBookController(TokenService tokenService)
+        {
+            this.tokenService = tokenService;
+        }
         [Authorize]
         [HttpPost("CreateBorrowingTransaction")]
-        public IActionResult CreateBorrowingTransaction(int patronId, int bookId)
-        {
-            try
-            {
-                // Check if the book is available for borrowing
-                var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
-                if (book == null || !book.IsAvailable)
-                {
-                    return BadRequest("The selected book is not available for borrowing.");
-                }
+        //public IActionResult CreateBorrowingTransaction(int patronId, int bookId, string email, string password)
+        //{
 
-                // Check if the patron exists
-                var patron = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
-                if (patron == null)
-                {
-                    return BadRequest("Patron not found.");
-                }
+        //    HttpClient BankClient = new HttpClient();
+        //    BankClient.BaseAddress = new Uri("https://localhost:7192");
+        //    try
+        //    {
+        //        // Check if the book is available for borrowing
+        //        var book = _context.Book.FirstOrDefault(b => b.BookId == bookId);
+        //        if (book == null || !book.IsAvailable)
+        //        {
+        //            return BadRequest("The selected book is not available for borrowing.");
+        //        }
 
-                var transaction = new BorrowingTransaction
-                {
-                    PatronId = patronId,
-                    BookId = bookId,
-                    BorrowDate = DateTime.Now,
-                    ReturnDate = null
-                };
-                _context.BorrowingTransaction.Add(transaction);
+        //        // Check if the patron exists
+        //        var patron = _context.Patron.FirstOrDefault(p => p.PatronId == patronId);
+        //        if (patron == null)
+        //        {
+        //            return BadRequest("Patron not found.");
+        //        }
 
-                ToggleBookAvailability(book);
+        //        // Authenticate the user (if necessary)
+        //        var loginRequest = new { Email = email, Password = password };
+        //        HttpResponseMessage loginResponse = BankClient.PostAsJsonAsync("api/Login", loginRequest).Result;
 
-                _context.SaveChanges();
-                return Ok("Borrowing successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
-            }
-        }
+        //        if (!loginResponse.IsSuccessStatusCode)
+        //        {
+        //            // Handle authentication failure
+        //            Log.Warning($"Login failed - Status code: {loginResponse.StatusCode}");
+        //            return Unauthorized("Invalid credentials");
+        //        }
+                
+        //        //int accountNum = GetAccount;
+        //        decimal price = _context.Book.FirstOrDefault(p => p.BookId == bookId).Price;
+        //        // Call the payment API to process the payment
+        //        HttpResponseMessage paymentResponse = BankClient.PostAsync($"api/Payment/ProcessPayment?email={email}&password={password}&accountNum={acc}&amount={}").Result;
+
+        //        if (!paymentResponse.IsSuccessStatusCode)
+        //        {
+        //            // Handle payment failure
+        //            return BadRequest($"Failed to make the payment. Status code: {paymentResponse.StatusCode}");
+        //        }
+
+        //        var transaction = new BorrowingTransaction
+        //        {
+        //            PatronId = patronId,
+        //            BookId = bookId,
+        //            BorrowDate = DateTime.Now,
+        //            ReturnDate = null
+        //        };
+        //        _context.BorrowingTransaction.Add(transaction);
+
+        //        ToggleBookAvailability(book);
+
+        //        _context.SaveChanges();
+        //        return Ok("Borrowing and payment completed successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        //    }
+        //}
+
         [Authorize]
         [HttpPost("ReturnBook")]
         public IActionResult MarkBookAsReturned(int returnBookId)

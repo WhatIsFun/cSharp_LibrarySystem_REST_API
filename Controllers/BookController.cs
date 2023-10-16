@@ -16,6 +16,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
         {
             _context = DB;
         }
+
         [Authorize]
         [HttpPost("addBook")]
         public IActionResult AddBook(Book book)
@@ -31,7 +32,8 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to add the book: {ex.Message}");
             }
         }
-        //[Authorize]
+
+        [Authorize]
         [HttpGet("getAllBooks")]
         public IActionResult GetAllBooks()
         {
@@ -46,6 +48,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             catch { return BadRequest("Error ..."); }
         }
+
         [Authorize]
         [HttpGet("getBookById")]
         public IActionResult GetBookById(int searchBookId)
@@ -61,6 +64,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }catch { return BadRequest("Error ..."); }
             
         }
+
         [Authorize]
         [HttpPut("updateBook")]
         public IActionResult UpdateBook([FromBody] Book book)
@@ -81,6 +85,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to update the book: {ex.Message}");
             }
         }
+
         [Authorize]
         [HttpDelete("deleteBook/{bookId}")]
         public IActionResult DeleteBook(int bookId)
@@ -109,6 +114,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
+
         [Authorize]
         [HttpGet("byPublicationYear/{year}")]
         public IActionResult GetBooksByPublicationYear(int year)
@@ -130,6 +136,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
+
         [Authorize]
         [HttpGet("available")]
         public IActionResult GetAvailableBooks()
@@ -149,6 +156,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to get the available books: {ex.Message}");
             }
         }
+
         [Authorize]
         [HttpGet("byAuthor/{author}")]
         public IActionResult GetBooksByAuthor(string author)
@@ -166,6 +174,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 return BadRequest($"Failed to get author books: {ex.Message}");
             }
         }
+
         [Authorize]
         [HttpGet("byTitle/{title}")]
         public IActionResult GetBookByTitle(string title)
@@ -184,6 +193,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
             
         }
+
         [Authorize]
         [HttpGet("byBorrowingDate/{borrowDate}")]
         public IActionResult GetTransactionsByBorrowingDate(DateTime borrowDate)
@@ -205,6 +215,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet("byReturnDate/{returnDate}")]
         public IActionResult GetTransactionsByReturnDate(DateTime returnDate)
@@ -226,6 +237,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet("byBookId/{bookId}")]
         public IActionResult GetTransactionsByBook(int bookId)
@@ -250,6 +262,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet("bookBorrowCount/{bookId}")]
         public IActionResult GetBookBorrowCount(int bookId)

@@ -1,6 +1,7 @@
 ﻿using cSharp_LibrarySystemWebAPI.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.WSIdentity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,6 +14,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
+        public string Token { get; set; }
         public static LibraryDbContext _context;
         public LoginController(LibraryDbContext DB)
         {
@@ -46,6 +48,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                     );
                     Log.Information($"new Login username: {userLogin.Name}, {login.Email}, {login.Password}");
                     return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+
 
                 }
                 else

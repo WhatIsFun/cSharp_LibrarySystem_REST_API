@@ -272,3 +272,4 @@ C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilo
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.Console.dll
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.Debug.dll
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.File.dll
+C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\microsoft.identitymodel.dll

@@ -12,8 +12,8 @@ using cSharp_LibrarySystemWebAPI;
 namespace cSharp_LibrarySystemWebAPI.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20231003073809_AddLogin")]
-    partial class AddLogin
+    [Migration("20231016071551_addTables")]
+    partial class addTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,9 @@ namespace cSharp_LibrarySystemWebAPI.Migrations
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("PublicationYear")
                         .HasColumnType("int");
@@ -92,9 +95,6 @@ namespace cSharp_LibrarySystemWebAPI.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LoginDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()

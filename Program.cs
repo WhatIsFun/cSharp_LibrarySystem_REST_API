@@ -54,6 +54,8 @@ namespace cSharp_LibrarySystemWebAPI
 
                 };
             });
+            //Services.AddDistributedMemoryCache(); // Use an appropriate distributed cache in a production environment.
+            //services.AddSession()
             //SeriLog from old way
             //Log.Logger = new LoggerConfiguration()
             //                 .MinimumLevel.Information()
