@@ -272,4 +272,6 @@ C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilo
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.Console.dll
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.Debug.dll
 C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Serilog.Sinks.File.dll
-C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\microsoft.identitymodel.dll
+C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\BCrypt.Net-Next.dll
+C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\BouncyCastle.Crypto.dll
+C:\Users\user\source\repos\cSharp_LibrarySystem_REST_API\bin\Debug\net6.0\Newtonsoft.Json.dll

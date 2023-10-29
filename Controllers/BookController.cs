@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace cSharp_LibrarySystemWebAPI.Controllers
 {
@@ -33,23 +34,32 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("getAllBooks")]
         public IActionResult GetAllBooks()
         {
             try
             {
-                var allBooks = _context.Book.ToList();
-                if (allBooks != null) 
+                var book = _context.Book.ToList();
+                if (book.Count > 0)
                 {
+                    var allBooks = book.Select(x => new
+                    {
+                        Author = x.Author,
+                        PublicationYear = x.PublicationYear,
+                        Availability = x.IsAvailable,
+                        Title = x.Title,
+                        ImagePath = x.ImagePath,
+                    }).ToList();
+
                     return Ok(allBooks);
                 }
                 return NotFound("There is no books found");
             }
-            catch { return BadRequest("Error ..."); }
+            catch (Exception ex){ return BadRequest(ex.Message); }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("getBookById")]
         public IActionResult GetBookById(int searchBookId)
         {
@@ -115,7 +125,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet("byPublicationYear/{year}")]
         public IActionResult GetBooksByPublicationYear(int year)
         {
@@ -137,7 +147,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("available")]
         public IActionResult GetAvailableBooks()
         {
@@ -157,7 +167,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("byAuthor/{author}")]
         public IActionResult GetBooksByAuthor(string author)
         {
@@ -175,19 +185,29 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("byTitle/{title}")]
         public IActionResult GetBookByTitle(string title)
         {
             try
             {
-                var book = _context.Book.FirstOrDefault(b => b.Title == title);
-                if (book == null)
+                var book = _context.Book.Where(b => b.Title.Contains(title)).ToList();
+                if (book != null && book.Count > 0)
                 {
-                    return NotFound("Book not found.");
+                    var bookTit = book.Select(book => new
+                    {
+                        Author = book.Author,
+                        PublicationYear = book.PublicationYear,
+                        Availability = book.IsAvailable,
+                        Title = book.Title,
+                        ImagePath = book.ImagePath,
+                    }).ToList();
+                    return Ok(bookTit);
                 }
-                return Ok(book);
-            }catch(Exception ex)
+                
+                return NotFound($"Book not found with {title}");
+            }
+            catch(Exception ex)
             {
                 return BadRequest($"Error {ex.Message}");
             }
@@ -238,7 +258,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
 
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("byBookId/{bookId}")]
         public IActionResult GetTransactionsByBook(int bookId)
         {
