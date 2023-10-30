@@ -81,9 +81,11 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 
-                        var data = new List<Claim>();
-                        data.Add(new Claim("Name", user.Name));
-
+                        var data = new List<Claim>
+                            {
+                                new Claim("Name", user.Name),
+                                new Claim("userId", user.PatronId.ToString()) // Convert PatronId to string
+                            };
                         var token = new JwtSecurityToken(
                         issuer: "Mohammed",
                         audience: "TRA",

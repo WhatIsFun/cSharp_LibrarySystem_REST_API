@@ -45,6 +45,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 {
                     var allBooks = book.Select(x => new
                     {
+                        Id = x.BookId,
                         Author = x.Author,
                         PublicationYear = x.PublicationYear,
                         Availability = x.IsAvailable,
@@ -197,6 +198,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                 {
                     var bookTit = book.Select(book => new
                     {
+                        Id = book.BookId,
                         Author = book.Author,
                         PublicationYear = book.PublicationYear,
                         Availability = book.IsAvailable,
