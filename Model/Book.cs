@@ -21,6 +21,7 @@ namespace cSharp_LibrarySystemWebAPI.Model
 
         [Required]
         public string ImagePath { get; set; }
+        public string? Description { get; set; }
         [JsonIgnore]
         public List<BorrowingTransaction> BorrowingTransactions { get; set; }
     }

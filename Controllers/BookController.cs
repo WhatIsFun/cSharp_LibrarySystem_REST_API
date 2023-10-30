@@ -50,6 +50,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                         Availability = x.IsAvailable,
                         Title = x.Title,
                         ImagePath = x.ImagePath,
+                        Description = x.Description,
                     }).ToList();
 
                     return Ok(allBooks);
@@ -201,6 +202,7 @@ namespace cSharp_LibrarySystemWebAPI.Controllers
                         Availability = book.IsAvailable,
                         Title = book.Title,
                         ImagePath = book.ImagePath,
+                        Description = book.Description,
                     }).ToList();
                     return Ok(bookTit);
                 }
